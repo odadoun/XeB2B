@@ -14,8 +14,8 @@
 # Create a scene handler for a specific graphics system
 # (Edit the next line(s) to choose another graphic system)
 #
+/vis/open OGLSQt
 #/vis/open OGLIX
-#/vis/open OGLSQt
 #
 ####/vis/open DAWNFILE
 #
@@ -27,7 +27,7 @@
 /vis/viewer/zoom 1.4
 /vis/viewer/flush
 #/vis/viewer/set/style surface
-/vis/geometry/set/visibility World 0 false
+/vis/geometry/set/visibility World 0 true
 
 #
 # for drawing the tracks
@@ -49,3 +49,4 @@
 
 
 #/run/beamOn 1
+
