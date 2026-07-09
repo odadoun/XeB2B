@@ -24,31 +24,39 @@
 // ********************************************************************
 //
 //
-/// \file XeB2BPhysicsList.hh
-/// \brief Definition of the XeB2BPhysicsList class
+/// \file XeB2BActionInitialization.cc
+/// \brief Implementation of the XeB2BActionInitialization class
 
-#ifndef XeB2BPhysicsList_h
-#define XeB2BPhysicsList_h 1
-
-#include "G4VModularPhysicsList.hh"
-
-/// Modular physics list
-///
-/// It includes the folowing physics builders
-/// - G4DecayPhysics
-/// - G4RadioactiveDecayPhysics
-/// - G4EmStandardPhysics
-
-class XeB2BPhysicsList: public G4VModularPhysicsList
-{
-public:
-  XeB2BPhysicsList();
-  virtual ~XeB2BPhysicsList();
-
-  virtual void SetCuts();
-};
+#include "XeB2BActionInitialization.hh"
+#include "XeB2BRunAction.hh"
+#include "XeB2BPrimaryGeneratorAction.hh"
+#include "XeB2BStackingAction.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#endif
+XeB2BActionInitialization::XeB2BActionInitialization()
+ : G4VUserActionInitialization()
+{}
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+XeB2BActionInitialization::~XeB2BActionInitialization()
+{}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void XeB2BActionInitialization::BuildForMaster() const
+{
+  SetUserAction(new XeB2BRunAction);
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void XeB2BActionInitialization::Build() const
+{
+  SetUserAction(new XeB2BRunAction);
+  SetUserAction(new XeB2BPrimaryGeneratorAction);
+  SetUserAction(new XeB2BStackingAction);
+}  
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

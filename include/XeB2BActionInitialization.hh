@@ -24,31 +24,32 @@
 // ********************************************************************
 //
 //
-/// \file XeB2BPhysicsList.hh
-/// \brief Definition of the XeB2BPhysicsList class
+/// \file XeB2BActionInitialization.hh
+/// \brief Definition of the XeB2BActionInitialization class
 
-#ifndef XeB2BPhysicsList_h
-#define XeB2BPhysicsList_h 1
+#ifndef XeB2BActionInitialization_h
+#define XeB2BActionInitialization_h 1
 
-#include "G4VModularPhysicsList.hh"
+#include "G4VUserActionInitialization.hh"
 
-/// Modular physics list
+/// Action initialization class.
 ///
-/// It includes the folowing physics builders
-/// - G4DecayPhysics
-/// - G4RadioactiveDecayPhysics
-/// - G4EmStandardPhysics
 
-class XeB2BPhysicsList: public G4VModularPhysicsList
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+class XeB2BActionInitialization : public G4VUserActionInitialization
 {
-public:
-  XeB2BPhysicsList();
-  virtual ~XeB2BPhysicsList();
+  public:
+    XeB2BActionInitialization();
+    virtual ~XeB2BActionInitialization();
 
-  virtual void SetCuts();
+    virtual void BuildForMaster() const;
+    virtual void Build() const;
+
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
 
+    

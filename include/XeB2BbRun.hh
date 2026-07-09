@@ -24,31 +24,46 @@
 // ********************************************************************
 //
 //
-/// \file XeB2BPhysicsList.hh
-/// \brief Definition of the XeB2BPhysicsList class
+/// \file XeB2BbRun.hh
+/// \brief Definition of the XeB2BbRun class
 
-#ifndef XeB2BPhysicsList_h
-#define XeB2BPhysicsList_h 1
+#ifndef XeB2BbRun_h
+#define XeB2BbRun_h 1
 
-#include "G4VModularPhysicsList.hh"
+#include "G4Run.hh"
+#include "globals.hh"
+#include "G4StatAnalysis.hh"
 
-/// Modular physics list
+/// Run class
 ///
-/// It includes the folowing physics builders
-/// - G4DecayPhysics
-/// - G4RadioactiveDecayPhysics
-/// - G4EmStandardPhysics
+/// In RecordEvent() there is collected information event per event 
+/// from Hits Collections, and accumulated statistic for the run 
 
-class XeB2BPhysicsList: public G4VModularPhysicsList
+class XeB2BbRun : public G4Run
 {
-public:
-  XeB2BPhysicsList();
-  virtual ~XeB2BPhysicsList();
+  public:
+    XeB2BbRun();
+    virtual ~XeB2BbRun();
 
-  virtual void SetCuts();
+    virtual void RecordEvent(const G4Event*);
+    virtual void Merge(const G4Run*);
+    
+  public:
+    G4int GetNbGoodEvents() const { return fGoodEvents; }
+    G4double GetSumDose()   const { return fSumDose; }    
+    G4StatAnalysis GetStatDose() const { return fStatDose; }
+
+  private:
+    G4int fCollID_cryst;
+    G4int fCollID_patient;   
+    G4int fPrintModulo;
+    G4int fGoodEvents;
+    G4double fSumDose;
+    G4StatAnalysis fStatDose;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
 
+    

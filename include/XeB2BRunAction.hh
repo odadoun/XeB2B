@@ -24,28 +24,28 @@
 // ********************************************************************
 //
 //
-/// \file XeB2BPhysicsList.hh
-/// \brief Definition of the XeB2BPhysicsList class
+/// \file XeB2BRunAction.hh
+/// \brief Definition of the XeB2BRunAction class
 
-#ifndef XeB2BPhysicsList_h
-#define XeB2BPhysicsList_h 1
+#ifndef XeB2BRunAction_h
+#define XeB2BRunAction_h 1
 
-#include "G4VModularPhysicsList.hh"
+#include "G4UserRunAction.hh"
+#include "globals.hh"
 
-/// Modular physics list
-///
-/// It includes the folowing physics builders
-/// - G4DecayPhysics
-/// - G4RadioactiveDecayPhysics
-/// - G4EmStandardPhysics
+class G4Run;
 
-class XeB2BPhysicsList: public G4VModularPhysicsList
+/// Run action class
+
+class XeB2BRunAction : public G4UserRunAction
 {
-public:
-  XeB2BPhysicsList();
-  virtual ~XeB2BPhysicsList();
-
-  virtual void SetCuts();
+  public:
+    XeB2BRunAction();
+    virtual ~XeB2BRunAction();
+    
+    virtual G4Run* GenerateRun();
+    virtual void BeginOfRunAction(const G4Run*);
+    virtual void   EndOfRunAction(const G4Run*);
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

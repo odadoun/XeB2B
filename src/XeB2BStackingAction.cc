@@ -23,32 +23,36 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-//
-/// \file XeB2BPhysicsList.hh
-/// \brief Definition of the XeB2BPhysicsList class
+// 
+/// \file XeB2BStackingAction.cc
+/// \brief Implementation of the XeB2BStackingAction class
 
-#ifndef XeB2BPhysicsList_h
-#define XeB2BPhysicsList_h 1
+#include "XeB2BStackingAction.hh"
 
-#include "G4VModularPhysicsList.hh"
-
-/// Modular physics list
-///
-/// It includes the folowing physics builders
-/// - G4DecayPhysics
-/// - G4RadioactiveDecayPhysics
-/// - G4EmStandardPhysics
-
-class XeB2BPhysicsList: public G4VModularPhysicsList
-{
-public:
-  XeB2BPhysicsList();
-  virtual ~XeB2BPhysicsList();
-
-  virtual void SetCuts();
-};
+#include "G4Track.hh"
+#include "G4NeutrinoE.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#endif
+XeB2BStackingAction::XeB2BStackingAction()
+{ }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+XeB2BStackingAction::~XeB2BStackingAction()
+{ }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4ClassificationOfNewTrack
+XeB2BStackingAction::ClassifyNewTrack(const G4Track* track)
+{
+  //keep primary particle
+  if (track->GetParentID() == 0) return fUrgent;
+
+  //kill secondary neutrino
+  if (track->GetDefinition() == G4NeutrinoE::NeutrinoE()) return fKill;
+  else return fUrgent;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

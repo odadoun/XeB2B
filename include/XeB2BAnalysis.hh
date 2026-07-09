@@ -24,31 +24,14 @@
 // ********************************************************************
 //
 //
-/// \file XeB2BPhysicsList.hh
-/// \brief Definition of the XeB2BPhysicsList class
+/// \file XeB2BAnalysis.hh
+/// \brief Selection of the analysis technology
 
-#ifndef XeB2BPhysicsList_h
-#define XeB2BPhysicsList_h 1
+#ifndef XeB2BAnalysis_h
+#define XeB2BAnalysis_h 1
 
-#include "G4VModularPhysicsList.hh"
-
-/// Modular physics list
-///
-/// It includes the folowing physics builders
-/// - G4DecayPhysics
-/// - G4RadioactiveDecayPhysics
-/// - G4EmStandardPhysics
-
-class XeB2BPhysicsList: public G4VModularPhysicsList
-{
-public:
-  XeB2BPhysicsList();
-  virtual ~XeB2BPhysicsList();
-
-  virtual void SetCuts();
-};
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+#include "g4root.hh"
+//#include "g4csv.hh"
+//#include "g4xml.hh"
 
 #endif
-

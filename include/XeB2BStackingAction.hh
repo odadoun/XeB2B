@@ -24,28 +24,27 @@
 // ********************************************************************
 //
 //
-/// \file XeB2BPhysicsList.hh
-/// \brief Definition of the XeB2BPhysicsList class
+/// \file XeB2BStackingAction.hh
+/// \brief Definition of the XeB2BStackingAction class
 
-#ifndef XeB2BPhysicsList_h
-#define XeB2BPhysicsList_h 1
+#ifndef XeB2BStackingAction_h
+#define XeB2BStackingAction_h 1
 
-#include "G4VModularPhysicsList.hh"
+#include "G4UserStackingAction.hh"
+#include "globals.hh"
 
-/// Modular physics list
+/// Stacking action class : manage the newly generated particles
 ///
-/// It includes the folowing physics builders
-/// - G4DecayPhysics
-/// - G4RadioactiveDecayPhysics
-/// - G4EmStandardPhysics
+/// One wishes do not track secondary neutrino.Therefore one kills it 
+/// immediately, before created particles will  put in a stack.
 
-class XeB2BPhysicsList: public G4VModularPhysicsList
+class XeB2BStackingAction : public G4UserStackingAction
 {
-public:
-  XeB2BPhysicsList();
-  virtual ~XeB2BPhysicsList();
-
-  virtual void SetCuts();
+  public:
+    XeB2BStackingAction();
+    virtual ~XeB2BStackingAction();
+     
+    virtual G4ClassificationOfNewTrack ClassifyNewTrack(const G4Track*);        
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
