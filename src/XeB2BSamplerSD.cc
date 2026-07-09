@@ -1,13 +1,13 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 /* 
- PPSIM code.   
+ XeB2BIM code.   
  dadoun@lal.in2p3.fr 
  */
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-#include "PPSSamplerSD.hh"
-#include "PPSOutput.hh"
+#include "XeB2BSamplerSD.hh"
+#include "XeB2BOutput.hh"
 #include "G4HCofThisEvent.hh"
 #include "G4Step.hh"
 #include "G4ThreeVector.hh"
@@ -24,10 +24,10 @@ G4double initial_Positron_pt, initial_Positron_E;
 G4int particleNumber=0.;
 extern G4double initial_x,initial_xp,initial_y,initial_yp,initial_z,initial_E;
 extern G4ThreeVector initial_PartMomDir;
-extern PPSOutput rootOutput;
+extern XeB2BOutput rootOutput;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-PPSSamplerSD::PPSSamplerSD(G4String name):G4VSensitiveDetector(name),StoreHit(true)
+XeB2BSamplerSD::XeB2BSamplerSD(G4String name):G4VSensitiveDetector(name),StoreHit(true)
 {
 	G4String HCname;
 	collectionName.insert(HCname="SamplerCollection");
@@ -35,16 +35,16 @@ PPSSamplerSD::PPSSamplerSD(G4String name):G4VSensitiveDetector(name),StoreHit(tr
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-PPSSamplerSD::~PPSSamplerSD()
+XeB2BSamplerSD::~XeB2BSamplerSD()
 {
-	G4cout << " PPS Sampler ended " << G4endl;
+	G4cout << " XeB2B Sampler ended " << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void PPSSamplerSD::Initialize(G4HCofThisEvent* HCE)
+void XeB2BSamplerSD::Initialize(G4HCofThisEvent* HCE)
 {
 	
-	PPSSamplerCollection = new PPSSamplerHitsCollection
+	XeB2BSamplerCollection = new XeB2BSamplerHitsCollection
 	(SensitiveDetectorName,collectionName[0]); 
 	/*  static G4int HCID = -1;
 	 if(HCID<0)
@@ -55,7 +55,7 @@ void PPSSamplerSD::Initialize(G4HCofThisEvent* HCE)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-G4bool PPSSamplerSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
+G4bool XeB2BSamplerSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 {
 	G4Track* theTrack		    =	aStep->GetTrack();
 	
@@ -114,8 +114,8 @@ G4bool PPSSamplerSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 		G4double polY			= 	theTrack->GetPolarization().y();
 		G4double polZ			= 	theTrack->GetPolarization().z();
 			
-		PPSSamplerHit* newHit = new PPSSamplerHit(sampname,z0,energy0,r0,energy,x,y,z,px,py,pz,pdg,polX,polY,polZ,trackID,time);
-		PPSSamplerCollection->insert( newHit );
+		XeB2BSamplerHit* newHit = new XeB2BSamplerHit(sampname,z0,energy0,r0,energy,x,y,z,px,py,pz,pdg,polX,polY,polZ,trackID,time);
+		XeB2BSamplerCollection->insert( newHit );
         //G4cout << x/cm << G4endl;		
 		
 		if(theTrack->GetVolume()!=theTrack->GetNextVolume()) StoreHit=true;
@@ -131,19 +131,19 @@ G4bool PPSSamplerSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void PPSSamplerSD::EndOfEvent(G4HCofThisEvent *HCE)
+void XeB2BSamplerSD::EndOfEvent(G4HCofThisEvent *HCE)
 {
 	/*  if (verboseLevel>0) 
 	 { 
-	 G4int NbHits = PPSSamplerCollection->entries();
+	 G4int NbHits = XeB2BSamplerCollection->entries();
 	 G4cout << "\n-------->Hits Collection: in this event they are " << NbHits 
 	 << " hits in the Sampler: " << G4endl;
-	 for (G4int i=0;i<NbHits;i++) (*PPSSamplerCollection)[i]->Print();
+	 for (G4int i=0;i<NbHits;i++) (*XeB2BSamplerCollection)[i]->Print();
 	 }
 	 */
 	G4SDManager * SDman = G4SDManager::GetSDMpointer();
 	G4int HCID = SDman->GetCollectionID(collectionName[0]);
-	HCE->AddHitsCollection( HCID, PPSSamplerCollection );
+	HCE->AddHitsCollection( HCID, XeB2BSamplerCollection );
 	
 }
 /*void SamplerSD::clear(){}

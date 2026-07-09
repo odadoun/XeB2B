@@ -12,6 +12,7 @@
 #include <time.h>
 
 extern G4double sum_initial_E;
+using namespace CLHEP;
 
 XeB2BOutput::XeB2BOutput():HitSampler0(0)
 {
@@ -38,72 +39,11 @@ XeB2BOutput::~XeB2BOutput(){
 
 void XeB2BOutput::WriteAndClose()
 {
-	if(rootFile->IsOpen())
-	{
-		G4cout << " Root File Open 1" << G4endl;
-		rootFile->Write();
-		if(EMSuperFish)EMSuperFish->Write("EMSuperFish");
-		if(inverseEMSuperFish)inverseEMSuperFish->Write("inverseEMSuperFish");
-		if(EM_hSuperFish)EM_hSuperFish->Write("EM_hSuperFish");
-        if(EMSeenFromParticles)EMSeenFromParticles->Write("EMSeenFromParticles");
-        if(EM_hSeenFromParticles)EM_hSeenFromParticles->Write("EM_hSeenFromParticles");
-		sprintf(Matos,"%s",Mat.c_str());
-		Char_t temp[1024];
-		if(HitSampler0!=NbEvents){
-			sprintf(temp,
-					"\n#############%s####################\
-					\n##############  WARNING %.2f%% incident particles  impinged the target ################\
-					\n# Particles Types : %d    \
-					\n# Number of particles which impinged the target   :   %d  \
-					\n# (%d incident was shoot) \
-					\n# Particles was shoot at Z0   =   %f m    \
-					\n# Particles Mean Energy   :   %f  MeV \
-					\n# Material    :   %s  size(x,y,z)=(%f,%f,%f)  mm  \
-					\n# Number of slices(nx,ny,nz)=(%d,%d,%d)   \
-					\n# RMS r:%f mm x: %f mm y:%f                                     \
-					\n# Capture Length : %f, radius (cm): %f	\
-					\n# AMD B0 : %f tesla , length: %f m and alpha :    %f m-1\
-					\n# Acceleration Field : %f , length: %f m,	number of cavities: %d\
-					\n# (Total length target+capture section %f m)\
-					\n####################################################\n",
-					buffer_datetime,
-					100.*HitSampler0/(double)NbEvents,ParticleID,HitSampler0,NbEvents,startZ,(sum_initial_E/MeV)/(double)NbEvents,Matos,
-					dim_target(0)/mm,dim_target(1)/mm,dim_target(2)/mm,
-					(int)nb_slices(0),(int)nb_slices(1),(int)nb_slices(2),rms,xrms,yrms,
-					AMDlength+Acclength,Capture_Radius/cm,AMDB0,AMDlength,AMDalpha,AccE/(megavolt),Acclength,NbOfCavities,TotalLength);
-		}
-		else
-			sprintf(temp,
-					"\n#############%s####################\
-					\n####################################################\
-					\n# Particles Types     :       %d                  \
-					\n# Number of particles which impinged the target       : %d                    \
-					\n# Particles was shoot at Z0   =   %f m \
-					\n# Particles Mean Energy               : %f MeV                \
-					\n# Material: %s    size(x,y,z)=(%f,%f,%f) mm       \
-					\n# Number of slices(nx,ny,nz)=(%d,%d,%d)          \
-					\n# RMS r:%f mm x: %f mm y:%f                                     \
-					\n# Capture Length : %f, radius (cm): %f	\
-					\n# AMD B0 : %f tesla , length: %f m and alpha :    %f m-1\
-					\n# Acceleration Field : %f , length: %f m,	number of cavities: %d\
-					\n# (Total length target+capture section %f m)\
-					\n####################################################\n",
-					buffer_datetime,
-					ParticleID,HitSampler0,startZ,(sum_initial_E/MeV)/(double)NbEvents,Matos,
-					dim_target(0)/mm,dim_target(1)/mm,dim_target(2)/mm,
-					(int)nb_slices(0),(int)nb_slices(1),(int)nb_slices(2),rms,xrms,yrms,
-					AMDlength+Acclength,Capture_Radius/cm,AMDB0,AMDlength,AMDalpha,AccE/(megavolt),Acclength,NbOfCavities,TotalLength);
-		
-		rootFile->WriteObject(&header, temp); 
-		//rootFile->WriteObject(GetEMSuperFish());
-		G4cout << " Root File close properly" << G4endl;
-		rootFile->Close();
-	}
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void XeB2BOutput::Init()
 {
-	rootFile = new TFile ("ppsim.root","RECREATE","XeB2Bim output file");
+    rootFile = new TFile ("ppsim.root","RECREATE","XeB2Bim output file");
     TObjString header("MyHeader");
 	
 	G4String name;

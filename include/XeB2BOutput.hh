@@ -22,7 +22,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TGraph.h"
-
+#include "TObjString.h"
 using namespace std;
 class XeB2BOutputMessenger;
 
