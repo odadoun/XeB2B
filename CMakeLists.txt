@@ -1,73 +1,33 @@
-
-#----------------------------------------------------------------------------
-# Setup the project
-#
 cmake_minimum_required(VERSION 3.10)
-#cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+
 project(XeB2B)
 
-#----------------------------------------------------------------------------
-# Find Geant4 package, activating all available UI and Vis drivers by default
-# You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
-# to build a batch mode only executable
-#
-option(WITH_GEANT4_UIVIS "Build example with Geant4 UI and Vis drivers" ON)
-if(WITH_GEANT4_UIVIS)
-  find_package(Geant4 REQUIRED ui_all vis_all)
-else()
-  find_package(Geant4 REQUIRED)
-endif()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#----------------------------------------------------------------------------
-# Setup Geant4 include directories and compile definitions
-# Setup include directory for this project
-#
+find_package(Geant4 REQUIRED)
 include(${Geant4_USE_FILE})
-include_directories(${PROJECT_SOURCE_DIR}/include)
 
-#----------------------------------------------------------------------------
-# Locate sources and headers for this project
-# NB: headers are included so they will show up in IDEs
-#
-file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
-file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
+find_package(ROOT REQUIRED COMPONENTS Core RIO Hist Tree)
+include(${ROOT_USE_FILE})
 
-#----------------------------------------------------------------------------
-# Add the executable, and link it to the Geant4 libraries
-#
-add_executable(xeb2b xeb2b.cc ${sources} ${headers})
-target_link_libraries(xeb2b ${Geant4_LIBRARIES})
+add_executable(xeb2b
+    xeb2b.cc
+    src/XeB2BDetectorConstruction.cc
+    src/XeB2BPrimaryGeneratorAction.cc
+    src/XeB2BPhysicsList.cc
+)
 
-#----------------------------------------------------------------------------
-# Copy all scripts to the build directory, i.e. the directory in which we
-# build XeB2B. This is so that we can run the executable directly because it
-# relies on these scripts being in the current working directory.
-#
-#set(EXAMPLEXeB2B_SCRIPTS
-#  debug.mac
-#  exampleXeB2B.in
-#  exampleXeB2B.out
-#  init_vis.mac
-#  run1.mac
-#  run2.mac
-#  vis.mac
-#  )
+target_include_directories(xeb2b PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+    ${ROOT_INCLUDE_DIRS}
+)
 
-#foreach(_script ${EXAMPLEXeB2B_SCRIPTS})
-#  configure_file(
-#    ${PROJECT_SOURCE_DIR}/${_script}
-#    ${PROJECT_BINARY_DIR}/${_script}
-#    COPYONLY
-#    )
-#endforeach()
+target_link_libraries(xeb2b
+    ${Geant4_LIBRARIES}
+    ${ROOT_LIBRARIES}
+)
 
-#----------------------------------------------------------------------------
-# For internal Geant4 use - but has no effect if you build this
-# example standalone
-#
-add_custom_target(XeB2Bb DEPENDS exampleXeB2Bb)
-
-#----------------------------------------------------------------------------
-# Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
-#
-install(TARGETS xeb2b DESTINATION bin )
+set_target_properties(xeb2b PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin
+)
