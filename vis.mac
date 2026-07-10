@@ -1,5 +1,5 @@
 #
-# Macro file for visualization (interactive mode)
+# Macro file for visualization with DAWNFILE
 #
 /control/verbose 2
 /run/verbose 2
@@ -8,12 +8,9 @@
 #
 /vis/open DAWNFILE
 #
-# create empty scene
-/vis/scene/create
+# Draw the world volume
 #
-# Draw the scene
-#
-/vis/scene/add/volume
+/vis/drawVolume
 #
 # for drawing the tracks
 #
