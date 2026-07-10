@@ -1,47 +1,14 @@
-//
-// ********************************************************************
-// * License and Disclaimer                                           *
-// *                                                                  *
-// * The  Geant4 software  is  copyright of the Copyright Holders  of *
-// * the Geant4 Collaboration.  It is provided  under  the terms  and *
-// * conditions of the Geant4 Software License,  included in the file *
-// * LICENSE and available at  http://cern.ch/geant4/license .  These *
-// * include a list of copyright holders.                             *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.  Please see the license in the file  LICENSE  and URL above *
-// * for the full disclaimer and the limitation of liability.         *
-// *                                                                  *
-// * This  code  implementation is the result of  the  scientific and *
-// * technical work of the GEANT4 collaboration.                      *
-// * By using,  copying,  modifying or  distributing the software (or *
-// * any work based  on the software)  you  agree  to acknowledge its *
-// * use  in  resulting  scientific  publications,  and indicate your *
-// * acceptance of all terms of the Geant4 Software license.          *
-// ********************************************************************
-//
-//
-/// \file XeB2BPrimaryGeneratorAction.hh
-/// \brief Definition of the XeB2BPrimaryGeneratorAction class
-
 #ifndef XeB2BPrimaryGeneratorAction_h
 #define XeB2BPrimaryGeneratorAction_h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
-#include "G4ParticleGun.hh"
+#include "XeB2BPrimaryGeneratorMessenger.hh"
+#include "G4ThreeVector.hh"
 #include "globals.hh"
+#include "XeB2BInput.hh"
 
 class G4ParticleGun;
 class G4Event;
-
-/// The primary generator action class with particle gum.
-///
-/// It defines an ion (F18), at rest, randomly distribued within a zone 
-/// in a patient defined in GeneratePrimaries(). Ion F18 can be changed 
-/// with the G4ParticleGun commands (see run2.mac).
 
 class XeB2BPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
@@ -49,14 +16,34 @@ class XeB2BPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     XeB2BPrimaryGeneratorAction();    
     virtual ~XeB2BPrimaryGeneratorAction();
 
-    virtual void GeneratePrimaries(G4Event*);         
+ 	
+  public:
+    virtual void GeneratePrimaries(G4Event*);
 
-    const G4ParticleGun* GetParticleGun() const { return fParticleGun; }
-  
+   void SetPositionOffset(G4ThreeVector offsetposition);
+   G4ThreeVector GetPositionOffset();
+
+   void SetAngleOffset(G4double offsetangle);
+   G4double GetAngleOffset();
   private:
-    G4ParticleGun*  fParticleGun;
+    G4ParticleGun*                particleGun;
+    XeB2BInput input;
+    XeB2BPrimaryGeneratorMessenger* primaryMessenger;
+    G4ThreeVector itsoffsetposition;
+    G4double itsoffsetangle;	
 };
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+inline void XeB2BPrimaryGeneratorAction::SetPositionOffset(G4ThreeVector offsetposition)
+{itsoffsetposition = offsetposition;}
 
+inline G4ThreeVector  XeB2BPrimaryGeneratorAction::GetPositionOffset()
+{return itsoffsetposition;}
+
+inline void XeB2BPrimaryGeneratorAction::SetAngleOffset(G4double offsetangle)
+{itsoffsetangle = offsetangle;}
+
+inline G4double  XeB2BPrimaryGeneratorAction::GetAngleOffset()
+{return itsoffsetangle;}
 #endif
+
+

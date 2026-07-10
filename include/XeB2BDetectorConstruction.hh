@@ -1,63 +1,78 @@
-//
-// ********************************************************************
-// * License and Disclaimer                                           *
-// *                                                                  *
-// * The  Geant4 software  is  copyright of the Copyright Holders  of *
-// * the Geant4 Collaboration.  It is provided  under  the terms  and *
-// * conditions of the Geant4 Software License,  included in the file *
-// * LICENSE and available at  http://cern.ch/geant4/license .  These *
-// * include a list of copyright holders.                             *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.  Please see the license in the file  LICENSE  and URL above *
-// * for the full disclaimer and the limitation of liability.         *
-// *                                                                  *
-// * This  code  implementation is the result of  the  scientific and *
-// * technical work of the GEANT4 collaboration.                      *
-// * By using,  copying,  modifying or  distributing the software (or *
-// * any work based  on the software)  you  agree  to acknowledge its *
-// * use  in  resulting  scientific  publications,  and indicate your *
-// * acceptance of all terms of the Geant4 Software license.          *
-// ********************************************************************
-//
-//
-/// \file XeB2BDetectorConstruction.hh
-/// \brief Definition of the XeB2BDetectorConstruction class
-
 #ifndef XeB2BDetectorConstruction_h
 #define XeB2BDetectorConstruction_h 1
+
+#include "XeB2BSamplerSD.hh"
+#include "XeB2BDetectorMessenger.hh"
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
+
 class G4VPhysicalVolume;
-class G4LogicalVolume;
-
-/// Detector construction class to define materials and geometry.
-///
-/// Crystals are positioned in Ring, with an appropriate rotation matrix. 
-/// Several copies of Ring are placed in the full detector.
-
+class G4Material;
+class XeB2BDetectorMessenger;
 class XeB2BDetectorConstruction : public G4VUserDetectorConstruction
 {
-  public:
-    XeB2BDetectorConstruction();
-    virtual ~XeB2BDetectorConstruction();
+	public:
+		XeB2BDetectorConstruction();
+		virtual ~XeB2BDetectorConstruction();
 
-  public:
-    virtual G4VPhysicalVolume* Construct();
-    virtual void ConstructSDandField();
-               
-  private:
-    void DefineMaterials();
+	public:
+		virtual G4VPhysicalVolume* Construct();
+		XeB2BDetectorMessenger* detectorMessenger;
 
-    G4bool  fCheckOverlaps;
+	private:
+		void DefineMaterials();
+		void SetupGeometry();
+	    void UpdateGeometry();
+	private:
+		G4Material* air;
+		G4Material* water;
+		G4Material* Vacuum;
+		G4Material* Al;
+		G4Material* Fe;
+		G4Material* Cu;
+		G4Material* Tungsten;
+		G4Material* Be;
+
+		G4Material* quartz;
+		G4VPhysicalVolume* worldPhys;
+		G4VPhysicalVolume*    pSampler0;
+		G4VPhysicalVolume*    pSampler1;
+		G4VPhysicalVolume*    pSampler2;
+		G4VPhysicalVolume*    pSampler3;
+		G4VPhysicalVolume*    pSampler4;
+		XeB2BSamplerSD*	      SamplerSensDet;	
+
+		G4VPhysicalVolume* capillaryPhys;
+		G4VPhysicalVolume* beampipePhys;
+		G4VPhysicalVolume* BePhys1;
+		G4VPhysicalVolume* BePhys2;
+		G4VPhysicalVolume* collimator1_Phys;
+		G4VPhysicalVolume* collimator2_Phys;
+		G4VPhysicalVolume* collimator3_Phys;
+		G4bool constructed;
+
+
+	public:
+		const G4VPhysicalVolume*  GetCollimator1()               {return collimator1_Phys;}
+		const G4VPhysicalVolume*  GetCollimator2()               {return collimator2_Phys;}
+		const G4VPhysicalVolume*  GetCollimator3()               {return collimator3_Phys;}
+
+		void SetPositionOffsetColl1(G4ThreeVector position1);
+		G4ThreeVector GetPositionOffsetColl1(){return itsposition1;}
+
+		void SetPositionOffsetColl2(G4ThreeVector position2);
+		G4ThreeVector GetPositionOffsetColl2(){return itsposition2;}
+
+		void SetPositionOffsetColl3(G4ThreeVector position3);
+		G4ThreeVector GetPositionOffsetColl3(){return itsposition3;}
+
+	private:
+		G4ThreeVector itsposition1;
+		G4ThreeVector itsposition2;
+		G4ThreeVector itsposition3;
 };
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
 

@@ -1,54 +1,82 @@
-//
-// ********************************************************************
-// * License and Disclaimer                                           *
-// *                                                                  *
-// * The  Geant4 software  is  copyright of the Copyright Holders  of *
-// * the Geant4 Collaboration.  It is provided  under  the terms  and *
-// * conditions of the Geant4 Software License,  included in the file *
-// * LICENSE and available at  http://cern.ch/geant4/license .  These *
-// * include a list of copyright holders.                             *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.  Please see the license in the file  LICENSE  and URL above *
-// * for the full disclaimer and the limitation of liability.         *
-// *                                                                  *
-// * This  code  implementation is the result of  the  scientific and *
-// * technical work of the GEANT4 collaboration.                      *
-// * By using,  copying,  modifying or  distributing the software (or *
-// * any work based  on the software)  you  agree  to acknowledge its *
-// * use  in  resulting  scientific  publications,  and indicate your *
-// * acceptance of all terms of the Geant4 Software license.          *
-// ********************************************************************
-//
-//
-/// \file XeB2BRunAction.hh
-/// \brief Definition of the XeB2BRunAction class
-
 #ifndef XeB2BRunAction_h
 #define XeB2BRunAction_h 1
 
 #include "G4UserRunAction.hh"
 #include "globals.hh"
+#include <fstream>
+using namespace std;
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+class XeB2BDetectorConstruction;
+class XeB2BPrimaryGeneratorAction;
 class G4Run;
 
-/// Run action class
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class XeB2BRunAction : public G4UserRunAction
 {
-  public:
-    XeB2BRunAction();
-    virtual ~XeB2BRunAction();
-    
-    virtual G4Run* GenerateRun();
-    virtual void BeginOfRunAction(const G4Run*);
-    virtual void   EndOfRunAction(const G4Run*);
+	public:
+		XeB2BRunAction(XeB2BDetectorConstruction*, XeB2BPrimaryGeneratorAction*);
+		virtual ~XeB2BRunAction();
+		
+		void   BeginOfRunAction(const G4Run*);
+		void   EndOfRunAction(const G4Run*);
+		
+		void CountProcesses(G4String);
+		
+		void SetColl1EDep(G4double tot_coll1_edep);
+		G4double GetColl1EDep2();
+		void SetColl1EDep2(G4double tot_coll1_edep2);
+		G4double GetColl1EDep();
+	    G4int nb_coll1_edep;
+		
+		void SetColl2EDep(G4double tot_coll2_edep);
+		G4double GetColl2EDep();
+		void SetColl2EDep2(G4double tot_coll2_edep2);
+		G4double GetColl2EDep2();
+	    G4int nb_coll2_edep;
+	
+		void SetColl3EDep(G4double tot_coll3_edep);
+		G4double GetColl3EDep();
+		void SetColl3EDep2(G4double tot_coll3_edep2);
+		G4double GetColl3EDep2();
+	    G4int nb_coll3_edep;
+	    G4int countkiller;			
+	 
+	private:
+		XeB2BDetectorConstruction*   detector;
+		XeB2BPrimaryGeneratorAction* primary;
+		G4double itstotcoll1_edep;
+		G4double itstotcoll1_edep2;
+		G4double itstotcoll2_edep;
+		G4double itstotcoll2_edep2;
+		G4double itstotcoll3_edep;
+		G4double itstotcoll3_edep2;
 };
+inline void XeB2BRunAction::SetColl1EDep(G4double tot_coll1_edep)
+{itstotcoll1_edep = tot_coll1_edep;}
+inline G4double XeB2BRunAction::GetColl1EDep() {return itstotcoll1_edep;}
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+inline void XeB2BRunAction::SetColl1EDep2(G4double tot_coll1_edep2)
+{itstotcoll1_edep2 = tot_coll1_edep2;}
+inline G4double XeB2BRunAction::GetColl1EDep2() {return itstotcoll1_edep2;}
+
+
+inline void XeB2BRunAction::SetColl2EDep(G4double tot_coll2_edep)
+{itstotcoll2_edep = tot_coll2_edep;}
+inline G4double XeB2BRunAction::GetColl2EDep() {return itstotcoll2_edep;}
+
+inline void XeB2BRunAction::SetColl2EDep2(G4double tot_coll2_edep2)
+{itstotcoll2_edep2 = tot_coll2_edep2;}
+inline G4double XeB2BRunAction::GetColl2EDep2() {return itstotcoll2_edep2;}
+
+inline void XeB2BRunAction::SetColl3EDep(G4double tot_coll3_edep)
+{itstotcoll3_edep = tot_coll3_edep;}
+inline G4double XeB2BRunAction::GetColl3EDep() {return itstotcoll3_edep;}
+
+inline void XeB2BRunAction::SetColl3EDep2(G4double tot_coll3_edep2)
+{itstotcoll3_edep2 = tot_coll3_edep2;}
+inline G4double XeB2BRunAction::GetColl3EDep2() {return itstotcoll3_edep2;}
 
 #endif
 

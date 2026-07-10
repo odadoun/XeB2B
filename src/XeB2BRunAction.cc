@@ -1,132 +1,66 @@
-//
-// ********************************************************************
-// * License and Disclaimer                                           *
-// *                                                                  *
-// * The  Geant4 software  is  copyright of the Copyright Holders  of *
-// * the Geant4 Collaboration.  It is provided  under  the terms  and *
-// * conditions of the Geant4 Software License,  included in the file *
-// * LICENSE and available at  http://cern.ch/geant4/license .  These *
-// * include a list of copyright holders.                             *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.  Please see the license in the file  LICENSE  and URL above *
-// * for the full disclaimer and the limitation of liability.         *
-// *                                                                  *
-// * This  code  implementation is the result of  the  scientific and *
-// * technical work of the GEANT4 collaboration.                      *
-// * By using,  copying,  modifying or  distributing the software (or *
-// * any work based  on the software)  you  agree  to acknowledge its *
-// * use  in  resulting  scientific  publications,  and indicate your *
-// * acceptance of all terms of the Geant4 Software license.          *
-// ********************************************************************
-//
-//
-/// \file XeB2BRunAction.cc
-/// \brief Implementation of the XeB2BRunAction class
-
 #include "XeB2BRunAction.hh"
-#include "XeB2BRun.hh"
+
+#include "XeB2BDetectorConstruction.hh"
 #include "XeB2BPrimaryGeneratorAction.hh"
 
 #include "G4Run.hh"
 #include "G4RunManager.hh"
 #include "G4UnitsTable.hh"
+#include "G4EmCalculator.hh"
 #include "G4SystemOfUnits.hh"
-
+#include "Randomize.hh"
+#include <iomanip>
+#include "XeB2BOutput.hh"
+extern G4double sum_initial_E;
+extern XeB2BOutput rootOutput;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-XeB2BRunAction::XeB2BRunAction()
- : G4UserRunAction()
-{  
-  //add new units for dose
-  // 
-  const G4double milligray = 1.e-3*gray;
-  const G4double microgray = 1.e-6*gray;
-  const G4double nanogray  = 1.e-9*gray;  
-  const G4double picogray  = 1.e-12*gray;
-   
-  new G4UnitDefinition("milligray", "milliGy" , "Dose", milligray);
-  new G4UnitDefinition("microgray", "microGy" , "Dose", microgray);
-  new G4UnitDefinition("nanogray" , "nanoGy"  , "Dose", nanogray);
-  new G4UnitDefinition("picogray" , "picoGy"  , "Dose", picogray);       
+XeB2BRunAction::XeB2BRunAction(XeB2BDetectorConstruction* det, XeB2BPrimaryGeneratorAction* prim)
+: detector(det), primary(prim),itstotcoll1_edep(0.),itstotcoll1_edep2(0.),
+itstotcoll2_edep(0.),itstotcoll2_edep2(0.),
+nb_coll1_edep(0),nb_coll2_edep(0),countkiller(0)
+{
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 XeB2BRunAction::~XeB2BRunAction()
-{ }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-G4Run* XeB2BRunAction::GenerateRun()
-{ return new XeB2BRun; }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void XeB2BRunAction::BeginOfRunAction(const G4Run* run)
 { 
-  G4cout << "### Run " << run->GetRunID() << " start." << G4endl;
-  
-  //inform the runManager to save random number seed
-  G4RunManager::GetRunManager()->SetRandomNumberStore(false);
+	G4cout << " XeB2B run action is deleted "  << G4endl; 
+	G4cout << countkiller << " e- after the magnet have been killed" << G4endl;
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void XeB2BRunAction::BeginOfRunAction(const G4Run* aRun)
+{  
+	G4cout << "### Run " << aRun->GetRunID() << " start." << G4endl;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void XeB2BRunAction::EndOfRunAction(const G4Run* run)
+void XeB2BRunAction::EndOfRunAction(const G4Run* aRun)
 {
-  G4int nofEvents = run->GetNumberOfEvent();
-  if (nofEvents == 0) return;
-  
-  // Run conditions
-  //  note: There is no primary generator action object for "master"
-  //        run manager for multi-threaded mode.
-  const XeB2BPrimaryGeneratorAction* generatorAction
-    = static_cast<const XeB2BPrimaryGeneratorAction*>(
-        G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction());
-  G4String partName;
-  if (generatorAction) 
-  {
-    G4ParticleDefinition* particle 
-      = generatorAction->GetParticleGun()->GetParticleDefinition();
-    partName = particle->GetParticleName();
-  }  
-  
-  //results
-  //
-  const XeB2BRun* b3Run = static_cast<const XeB2BRun*>(run);
-  G4int nbGoodEvents = b3Run->GetNbGoodEvents();
-  G4double sumDose   = b3Run->GetSumDose();
-  G4StatAnalysis statDose = b3Run->GetStatDose();
-        
-  //print
-  //
-  if (IsMaster())
-  {
-    G4cout
-     << G4endl
-     << "--------------------End of Global Run-----------------------"
-     << G4endl
-     << "  The run was " << nofEvents << " events ";
-  }
-  else
-  {
-    G4cout
-     << G4endl
-     << "--------------------End of Local Run------------------------"
-     << G4endl
-     << "  The run was " << nofEvents << " "<< partName;
-  }      
-  statDose /= gray;
-  G4cout
-     << "; Nb of 'good' e+ annihilations: " << nbGoodEvents  << G4endl
-     << " Total dose in patient : " << G4BestUnit(sumDose, "Dose") << G4endl
-     << " Total dose in patient : " << statDose << " Gy" << G4endl
-     << "------------------------------------------------------------" << G4endl 
-     << G4endl;
+	G4cout << " ### Run " << aRun->GetRunID() << " end" << G4endl;
+	G4double edep_mean1 = GetColl1EDep() / nb_coll1_edep;
+	G4double edep_mean2 = GetColl2EDep() / nb_coll2_edep;
+	G4double edep_mean3 = GetColl3EDep() / nb_coll3_edep;
+	
+	G4double rms1 =  (GetColl1EDep2()/nb_coll1_edep - edep_mean1*edep_mean1);
+	G4double rms2 =  (GetColl2EDep2()/nb_coll2_edep - edep_mean2*edep_mean2);
+	G4double rms3 =  (GetColl3EDep2()/nb_coll3_edep - edep_mean3*edep_mean2);
+	
+	G4cout << " Deposited energies on Coll1 " << GetColl1EDep() / MeV << " MeV +- " << rms1 / MeV << G4endl;
+	G4cout << " Deposited energies on Coll2 " << GetColl2EDep() / MeV << " MeV +- " << rms2 / MeV  << G4endl;
+	G4cout << " Deposited energies on Coll2 " << GetColl3EDep() / MeV << " MeV +- " << rms3 / MeV  << G4endl;
+	G4cout << " ########################### " << G4endl;
+	
+	
+	Char_t temp[1024];
+	if((rootOutput.rootFile)->IsOpen())
+	{
+	sprintf(temp,	"\n#################################################################\n\
+			#  Deposited energies on Coll1 %f +- %f MeV #\n\
+			#  Deposited energies on Coll2 %f +- %f MeV #\n\
+			#  Deposited energies on Coll3 %f +- %f MeV #\n\
+		        ################################################################\n",
+				  GetColl1EDep() / MeV, rms1 / MeV, GetColl2EDep() / MeV , rms2 / MeV , GetColl3EDep() / MeV , rms3 / MeV);
+			      (rootOutput.rootFile)->WriteObject((rootOutput.header), temp);
+	}
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
