@@ -63,6 +63,11 @@ void XeB2BDetectorConstruction::DefineMaterials()
   G4double fractionmass;
 
   Materials = new Xenon1tMaterials();
+  G4double pGdConcentration = 0.2;      // Gadolinium mass concntration
+  G4double pWABSL = 1.;                 // Water absorption length scaling factor
+  G4double pEPTFEReflectivity = 0.9935; // ePTFE reflectivity
+
+  Materials->DefineMaterials(pWABSL, pEPTFEReflectivity, pGdConcentration);
   xenon = G4Material::GetMaterial("LXe");
   vacuum = G4Material::GetMaterial("Vacuum");
   //
