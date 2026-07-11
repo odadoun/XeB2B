@@ -13,14 +13,16 @@ XeB2BOutput::XeB2BOutput()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 XeB2BOutput::~XeB2BOutput(){
-	if(rootFile && rootFile->IsOpen())
+/*
+ * if(rootFile && rootFile->IsOpen())
 	{
-		G4cout << " ))))))))))))))))))))))))))))))))) Root File Open  (msg from XeB2BOutput destructor)" << G4endl;
-		if(sTree) rootFile->Write();
-		rootFile->Close();
-		G4cout << " Root File close proprely (msg from XeB2BOutput destructor) " << G4endl;
-		delete rootFile;
+	     G4cout << " ))))))))))))))))))))))))))))))))) Root File Open  (msg from XeB2BOutput destructor)" << G4endl;
+	     if(sTree) rootFile->Write();
+	     rootFile->Close();
+	     G4cout << " Root File close proprely (msg from XeB2BOutput destructor) " << G4endl;
+	     delete rootFile;
 	}
+	*/
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void XeB2BOutput::WriteAndClose()
@@ -75,12 +77,12 @@ void XeB2BOutput::WriteDataSampler(XeB2BSamplerHitsCollection *hc)
 	{
 		//TTree*
 		sTree=(TTree*)gDirectory->Get((*hc)[i]->GetName());
-		if(!sTree) G4Exception("PPSOutput: ROOT Sampler not found!","sTree pb",FatalException,"don't find tree in the rootfile:(");
+		if(!sTree) 
+		G4Exception("PPSOutput: ROOT Sampler not found!","sTree pb",FatalException,"don't find tree in the rootfile:(");
 
 		pdg=(*hc)[i]->GetPDG();
 		track_id=(*hc)[i]->GetTrackID();
 		t=(*hc)[i]->GetTime() / nanosecond ;
-
 		x=(*hc)[i]->GetX()/cm;
 		y=(*hc)[i]->GetY()/cm;
 		z=(*hc)[i]->GetZ()/cm;
@@ -90,8 +92,8 @@ void XeB2BOutput::WriteDataSampler(XeB2BSamplerHitsCollection *hc)
 		py=(*hc)[i]->GetPY();
 		pz=(*hc)[i]->GetPZ();
 
-    if((*hc)[i]->GetName() != "Sampler0")
-    {
+    		if((*hc)[i]->GetName() != "Sampler0")
+    		{
 			E0=(*hc)[i]->GetEnergy0() / MeV;
 			r0=(*hc)[i]->GetR0()/cm;
 			z0=(*hc)[i]->GetZ0()/cm;

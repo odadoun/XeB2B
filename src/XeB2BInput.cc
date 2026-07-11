@@ -1,7 +1,7 @@
 #include "XeB2BInput.hh"
 #include "globals.hh"
 #include "XeB2BInputMessenger.hh"
-XeB2BInput::XeB2BInput():itsName("/Users/dadoun/Programs/geant4/XeB2B/input.dat")
+XeB2BInput::XeB2BInput():itsName("input.dat")
 {
     inputMessenger = new XeB2BInputMessenger(this);
 	//inputMessenger = new XeB2BInputMessenger(this);
@@ -15,7 +15,7 @@ XeB2BInput::~XeB2BInput()
 //
 void XeB2BInput::SetInputBunch(G4String NameFile)
 {
-        if(itsName){G4cerr<< " Error in passing input bunch file "<<G4endl; exit(1);}
+        if(!itsName){G4cerr<< " Error in passing input bunch file "<<G4endl; exit(1);}
         itsName = NameFile;
         input_file.open(itsName);
         if(!input_file.good()){ G4cerr<< "SetInputBunch : Cannot open bunch file "<< itsName <<G4endl; exit(1);}

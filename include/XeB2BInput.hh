@@ -19,7 +19,7 @@ class XeB2BInput
   public:
     XeB2BInput();
    ~XeB2BInput();
-    void GetNextParticle(G4double& z0, G4double& x0 , G4double& y0 , G4double& px0, G4double& py0, G4double& zp0);
+    void GetNextParticle(G4double& z0, G4double& x0 , G4double& y0 , G4double& px0, G4double& py0, G4double& pz0);
   private:
     ifstream input_file;
     G4String itsName;
