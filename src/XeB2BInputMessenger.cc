@@ -18,7 +18,7 @@
 
 XeB2BInputMessenger::XeB2BInputMessenger(XeB2BInput *In):Input(In)
 { 
-  InputCmd = new G4UIcmdWithAString("/eli/inputbunch",this);
+  InputCmd = new G4UIcmdWithAString("/xe2b2/inputbunch",this);
   InputCmd->SetGuidance("Set input bunch file.");
   InputCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }

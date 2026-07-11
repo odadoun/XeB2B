@@ -38,7 +38,8 @@ void XeB2BPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	G4double E;
 	G4double m;	
 
-    input.GetNextParticle(z0,x0,y0,px0,py0,pz0);
+        input.GetNextParticle(z0,x0,y0,px0,py0,pz0);
+	G4cout << "Primary " << pz0 << G4endl;
 	z0*=cm;x0*=cm; y0*=cm;
 	px0*=MeV; py0*=MeV; pz0*=MeV;
 	p=sqrt(px0*px0+py0*py0+pz0*pz0);	

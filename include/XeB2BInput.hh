@@ -19,18 +19,17 @@ class XeB2BInput
   public:
     XeB2BInput();
    ~XeB2BInput();
-    void GetNextParticle(G4double& z0, G4double& x0 , G4double& y0 ,
-						 G4double& px0, G4double& py0, G4double& zp0);
+    void GetNextParticle(G4double& z0, G4double& x0 , G4double& y0 , G4double& px0, G4double& py0, G4double& zp0);
   private:
-	ifstream input_file;
-	G4String itsName;
+    ifstream input_file;
+    G4String itsName;
     G4bool pola_file; 
     G4bool channelling_file; 
   public:
-	void SetInputBunch(G4String NameFile);
-	 XeB2BInputMessenger* inputMessenger;	//void SetInputBunch(G4String NameFile);//{ itsName = NameFile; }
+	 XeB2BInputMessenger* inputMessenger;	
+	 void SetInputBunch(G4String NameFile);
 	//XeB2BInputMessenger* inputMessenger;
-	//G4String GetInputName(){return itsName;}
+	G4String GetInputName(){return itsName;}
 };
 
 
