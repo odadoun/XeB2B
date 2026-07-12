@@ -27,10 +27,10 @@ void XeB2BInput::GetNextParticle(G4double & z0, G4double& x0 , G4double& y0 ,
 {
 	if (!(input_file >> z0 >> x0 >> y0 >> px0 >> py0 >> pz0))
      {
-    	if (!input_file.eof()) 
+    	if (!input_file.eof())
         	G4cerr << "Error while reading bunch file " << itsName << G4endl;
      }
- 
-}		  
+
+}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

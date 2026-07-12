@@ -123,93 +123,98 @@ void XeB2BDetectorConstruction::SetupGeometry()
   //
   // World
   //
-
   G4VSolid* worldSolid = new G4Box("World",2.*m,2.*m,2.*m);
   G4LogicalVolume* worldLogical = new G4LogicalVolume(worldSolid,Vacuum,"World");
   worldPhys = new G4PVPlacement(0,G4ThreeVector(),worldLogical,"World", 0,false,0);
 
-   G4double current_position = -13.*cm;
-	//Sampler0
-	G4Box* solidSampler0 = new G4Box("Sampler0", samplerXY/2., samplerXY/2., samplerZ/2.);
-  G4VisAttributes* LogVisAttSampler= new G4VisAttributes(G4Colour(1.0,1.0,0.));
-	//LogVisAttSampler->SetForceSolid(true);
-	LogVisAttSampler->SetVisibility(false);
-  G4ThreeVector positionSampler0= G4ThreeVector(0.,0.,current_position);
-  G4LogicalVolume* logicSampler0 = new G4LogicalVolume(solidSampler0,Vacuum,"Sampler0");
-  pSampler0 = new G4PVPlacement(0,positionSampler0,logicSampler0,"Sampler0",worldLogical,false,0);
-  logicSampler0 ->SetVisAttributes(LogVisAttSampler);
+  G4RotationMatrix* rotation = new G4RotationMatrix();
+  rotation->rotateY(M_PI / 2);  // Rotation de 90° autour de Y pour aligner sur X
 
-	G4SDManager* SDman = G4SDManager::GetSDMpointer();
+  // Grand cylindre de xénon
+  G4double outerRadius = 50.*cm;
+  G4double outerHeight = 100.*cm;
+  G4double innerRadius = 20.*cm;
+  G4double innerHeight = 50.*cm;
+  G4double sampler_thickness  = 2.E-11 * m;
 
-	SamplerSensDet = new XeB2BSamplerSD("XeB2BSamplerSD");
-	SDman->AddNewDetector(SamplerSensDet);
-	logicSampler0->SetSensitiveDetector(SamplerSensDet);
+  G4Tubs* outerSolid =
+      new G4Tubs("OuterXeSolid",
+                 0.,
+                 outerRadius,
+                 outerHeight/2.,
+                 0.*deg,
+                 360.*deg);
 
-  current_position = -10*cm ;
-  G4ThreeVector positionSampler1= G4ThreeVector(0.,0.,current_position+samplerZ/2.);
-  G4LogicalVolume* logicSampler1 = new G4LogicalVolume(solidSampler0,Vacuum,"Sampler1");
-  pSampler1 = new G4PVPlacement(0,positionSampler1,logicSampler0,"Sampler1",worldLogical,false,0);
-  logicSampler1 -> SetVisAttributes(LogVisAttSampler);
-  logicSampler1 -> SetSensitiveDetector(SamplerSensDet);
+  G4LogicalVolume* outerLogic =
+      new G4LogicalVolume(outerSolid,
+                          Vacuum,
+                          "OuterXeLogic");
 
+    new G4PVPlacement(rotation,
+                    G4ThreeVector(),
+                    outerLogic,
+                    "OuterXe",
+                    worldLogical,
+                    false,
+                    0,
+                    true);
 
-  //G4NistManager* nist = G4NistManager::Instance();
-  //G4Material* xenon = nist->FindOrBuildMaterial("G4_XENON");
+    //Sampler0
+    G4Tubs* solidSampler0 =
+      new G4Tubs("Sampler0",
+                   outerRadius-sampler_thickness,
+                   outerRadius,
+                   outerHeight,
+                   0.*deg,
+                   360.*deg);
 
-// Grand cylindre de xénon
-G4double outerRadius = 50.*cm;
-G4double outerHeight = 100.*cm;
+    G4VisAttributes* LogVisAttSampler= new G4VisAttributes(G4Colour(1.0,1.0,0.));
+  	//LogVisAttSampler->SetForceSolid(true);
+  	LogVisAttSampler->SetVisibility(true);
 
-G4RotationMatrix* rotation = new G4RotationMatrix();
-rotation->rotateY(M_PI / 2);  // Rotation de 90° autour de Y pour aligner sur X
+    G4ThreeVector positionSampler= G4ThreeVector(0.,0.,0);
+    G4LogicalVolume* logicSampler0 = new G4LogicalVolume(solidSampler0,Vacuum,"Sampler0");
+    pSampler0 = new G4PVPlacement(rotation,positionSampler,logicSampler0,"Sampler0",worldLogical,false,0);
+    logicSampler0 ->SetVisAttributes(LogVisAttSampler);
 
-G4Tubs* outerSolid =
-    new G4Tubs("OuterXeSolid",
-               0.,
-               outerRadius,
-               outerHeight/2.,
-               0.*deg,
-               360.*deg);
-
-G4LogicalVolume* outerLogic =
-    new G4LogicalVolume(outerSolid,
-                        xenon,
-                        "OuterXeLogic");
-
-new G4PVPlacement(rotation,
-                  G4ThreeVector(),
-                  outerLogic,
-                  "OuterXe",
-                  worldLogical,
-                  false,
-                  0,
-                  true);
+  	G4SDManager* SDman = G4SDManager::GetSDMpointer();
+  	SamplerSensDet = new XeB2BSamplerSD("XeB2BSamplerSD");
+  	SDman->AddNewDetector(SamplerSensDet);
+  	logicSampler0->SetSensitiveDetector(SamplerSensDet);
 
 
-// Petit cylindre de xénon au centre
-G4double innerRadius = 20.*cm;
-G4double innerHeight = 50.*cm;
+  G4Tubs* innerSolid =
+      new G4Tubs("InnerXeSolid",
+                 0.,
+                 innerRadius,
+                 innerHeight/2.,
+                 0.*deg,
+                 360.*deg);
 
-G4Tubs* innerSolid =
-    new G4Tubs("InnerXeSolid",
-               0.,
-               innerRadius,
-               innerHeight/2.,
-               0.*deg,
-               360.*deg);
+  G4LogicalVolume* innerLogic =
+      new G4LogicalVolume(innerSolid,
+                          Vacuum,
+                          "InnerXeLogic");
 
-G4LogicalVolume* innerLogic =
-    new G4LogicalVolume(innerSolid,
-                        xenon,
-                        "InnerXeLogic");
+  new G4PVPlacement(rotation,
+                    G4ThreeVector(0,0,0),
+                    innerLogic,
+                    "InnerXe",
+                    worldLogical,
+                    false,
+                    0,
+                    true);
 
-new G4PVPlacement(nullptr,
-                  G4ThreeVector(0,0,0),
-                  innerLogic,
-                  "InnerXe",
-                  outerLogic,
-                  false,
-                  0,
-                  true);
+  G4Tubs* solidSampler1 =
+    new G4Tubs("Sampler1",
+                 innerRadius-sampler_thickness,
+                 innerRadius,
+                 outerHeight/2.,
+                 0.*deg,
+                 360.*deg);
 
+  G4LogicalVolume* logicSampler1 = new G4LogicalVolume(solidSampler1,Vacuum,"Sampler1");
+  pSampler1 = new G4PVPlacement(rotation,positionSampler,logicSampler1,"Sampler1",worldLogical,false,0);
+  logicSampler1 ->SetVisAttributes(LogVisAttSampler);
+  logicSampler1 ->SetSensitiveDetector(SamplerSensDet);
 }

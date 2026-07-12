@@ -20,7 +20,7 @@ G4int evtNb;
 extern XeB2BOutput rootOutput;
 
 XeB2BEventAction::XeB2BEventAction(XeB2BRunAction * ra)
-:printModulo(10000),runAction(ra),bool_cool1(false),bool_cool2(false)
+:printModulo(10000),runAction(ra)
 {
 	G4cout << " -----------> Event Action Constructor ---->" << G4endl;
 }
@@ -41,8 +41,6 @@ void XeB2BEventAction::BeginOfEventAction(const G4Event* evt)
   //printing survey
  if (evtNb%printModulo == 0)
     G4cout << "\n---> Begin of Event: " << evtNb << G4endl;
-	bool_cool1 = false;
-	bool_cool2 = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

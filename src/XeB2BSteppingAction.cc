@@ -74,12 +74,14 @@ void XeB2BSteppingAction::UserSteppingAction(const G4Step* aStep)
 	G4Track* aTrack = aStep->GetTrack();
 	G4String particleName = aTrack->GetDynamicParticle()->GetDefinition()->GetParticleName();
         G4int trackID=aTrack->GetTrackID();// Primary tracks have a track ID =1 	
-	if( endPoint->GetPosition().z()>12.*cm && particleName=="e-" && trackID==1)
+/*
+ * if( endPoint->GetPosition().z()>12.*cm && particleName=="e-" && trackID==1)
 	{
 		fpSteppingManager->GetTrack()->SetTrackStatus(fStopAndKill);
 //		G4cout << " e- killed !!! " << G4endl;	
 		runAction->countkiller +=1;
 	}	
+	*/
 }   
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

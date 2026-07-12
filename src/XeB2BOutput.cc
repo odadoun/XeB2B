@@ -38,15 +38,10 @@ void XeB2BOutput::Init()
 {
 	rootFile = new TFile ("XeB2B.root","RECREATE","XeB2BSim output file");
   header = new TObjString("MyHeader");
-	G4cout << "HERE WE ARE..." << G4endl;
 	G4String name;
-	for(G4int i=0;i<=4;i++){
+	for(G4int i=0;i<=1;i++){
 		if(i==0) name="Sampler0";
-        if(i==1) name="Sampler1";
-		if(i==2) name="Sampler2";
-		if(i==3) name="Sampler3";
-		if(i==4) name="Sampler4";
-
+    if(i==1) name="Sampler1";
 
 		TTree* SamplerTree = new TTree(name,"Sampler output");
 		SamplerTree->Branch("pdg",&pdg,"pdg/I");
@@ -61,12 +56,12 @@ void XeB2BOutput::Init()
 		SamplerTree->Branch("px",&px,"px/F");
 		SamplerTree->Branch("py",&py,"py/F");
 		SamplerTree->Branch("pz",&pz,"pz/F");
-        if(i != 0)
-        {
-            SamplerTree->Branch("E0",&E0,"E0/F");
-            SamplerTree->Branch("r0",&r0,"r0/F");
-            SamplerTree->Branch("z0",&z0,"z0/F");
-        }
+    if(i != 0)
+    {
+        SamplerTree->Branch("E0",&E0,"E0/F");
+        SamplerTree->Branch("r0",&r0,"r0/F");
+        SamplerTree->Branch("z0",&z0,"z0/F");
+    }
 	}
 }
 
@@ -77,7 +72,7 @@ void XeB2BOutput::WriteDataSampler(XeB2BSamplerHitsCollection *hc)
 	{
 		//TTree*
 		sTree=(TTree*)gDirectory->Get((*hc)[i]->GetName());
-		if(!sTree) 
+		if(!sTree)
 		G4Exception("PPSOutput: ROOT Sampler not found!","sTree pb",FatalException,"don't find tree in the rootfile:(");
 
 		pdg=(*hc)[i]->GetPDG();
@@ -92,15 +87,14 @@ void XeB2BOutput::WriteDataSampler(XeB2BSamplerHitsCollection *hc)
 		py=(*hc)[i]->GetPY();
 		pz=(*hc)[i]->GetPZ();
 
-    		if((*hc)[i]->GetName() != "Sampler0")
-    		{
+		if((*hc)[i]->GetName() != "Sampler0")
+		{
 			E0=(*hc)[i]->GetEnergy0() / MeV;
 			r0=(*hc)[i]->GetR0()/cm;
 			z0=(*hc)[i]->GetZ0()/cm;
 			sTree->Fill();
 		}
-		else
-		sTree->Fill();
+		else	sTree->Fill();
 	}
 
 }
