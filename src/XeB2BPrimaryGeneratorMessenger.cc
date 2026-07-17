@@ -1,4 +1,4 @@
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//....oo:oOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 /* 
  XeB2BIM code.   
@@ -22,15 +22,15 @@ extern XeB2BOutput rootOutput;
 XeB2BPrimaryGeneratorMessenger::XeB2BPrimaryGeneratorMessenger(XeB2BPrimaryGeneratorAction* XeB2BGun)
 :XeB2BAction(XeB2BGun)
 {
-	gunDir = new G4UIdirectory("/eli/gun/");
+	gunDir = new G4UIdirectory("/xe2b2/gun/");
 	gunDir->SetGuidance("PrimaryGenerator control");
 	
-	PositionOffsetCmd = new G4UIcmdWith3VectorAndUnit("/eli/gun/offset_position",this);  
+	PositionOffsetCmd = new G4UIcmdWith3VectorAndUnit("/xe2b2/gun/offset_position",this);  
 	PositionOffsetCmd->SetGuidance("Set Primary Position offset ");
         PositionOffsetCmd->SetUnitCandidates("um");
 	
-	AngleOffsetCmd = new G4UIcmdWithADouble("/eli/gun/offset_angle",this);
-     AngleOffsetCmd->SetGuidance("Set Primary Angle offset");
+	AngleOffsetCmd = new G4UIcmdWithADouble("/xe2b2/gun/offset_angle",this);
+        AngleOffsetCmd->SetGuidance("Set Primary Angle offset");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

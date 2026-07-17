@@ -36,11 +36,11 @@ G4double Be_thickness = 150. * micrometer ;
 using namespace CLHEP;
 
 XeB2BDetectorConstruction::XeB2BDetectorConstruction()
-:constructed(false)
-{;}
+:constructed(false),itsthickness(0.)
+{fMessenger = new XeB2BDetectorMessenger(this);}
 
 XeB2BDetectorConstruction::~XeB2BDetectorConstruction()
-{;}
+{delete fMessenger;}
 
 G4VPhysicalVolume* XeB2BDetectorConstruction::Construct()
 {
@@ -134,6 +134,7 @@ void XeB2BDetectorConstruction::SetupGeometry()
   G4double outerRadius = 50.*cm;
   G4double outerHeight = 100.*cm;
   G4double innerRadius = 20.*cm;
+  G4cout << " INNER Thickess " << GetCylinderThickness() << G4endl;
   G4double innerHeight = 50.*cm;
   G4double sampler_thickness  = 2.E-11 * m;
 
@@ -147,7 +148,7 @@ void XeB2BDetectorConstruction::SetupGeometry()
 
   G4LogicalVolume* outerLogic =
       new G4LogicalVolume(outerSolid,
-                          Vacuum,
+                          xenon,
                           "OuterXeLogic");
 
     new G4PVPlacement(rotation,
@@ -162,8 +163,8 @@ void XeB2BDetectorConstruction::SetupGeometry()
     //Sampler0
     G4Tubs* solidSampler0 =
       new G4Tubs("Sampler0",
-                   outerRadius-sampler_thickness,
-                   outerRadius,
+                   innerRadius,
+                   innerRadius+sampler_thickness,
                    outerHeight,
                    0.*deg,
                    360.*deg);
@@ -193,7 +194,7 @@ void XeB2BDetectorConstruction::SetupGeometry()
 
   G4LogicalVolume* innerLogic =
       new G4LogicalVolume(innerSolid,
-                          Vacuum,
+                          xenon,
                           "InnerXeLogic");
 
   new G4PVPlacement(rotation,
@@ -207,8 +208,8 @@ void XeB2BDetectorConstruction::SetupGeometry()
 
   G4Tubs* solidSampler1 =
     new G4Tubs("Sampler1",
-                 innerRadius-sampler_thickness,
-                 innerRadius,
+                 outerRadius-sampler_thickness,
+                 outerRadius,
                  outerHeight/2.,
                  0.*deg,
                  360.*deg);

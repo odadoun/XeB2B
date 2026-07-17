@@ -39,14 +39,9 @@ class XeB2BDetectorMessenger: public G4UImessenger
     
   private:
    G4UIdirectory*                              detDir;
-   XeB2BDetectorConstruction*                    Detector;
+   XeB2BDetectorConstruction*                  Detector;
 	
-   G4UIcmdWith3VectorAndUnit*          Coll1_positionCmd;
-   G4UIcmdWith3VectorAndUnit*          Coll2_positionCmd;
-   G4UIcmdWith3VectorAndUnit*          Coll3_positionCmd;
-   G4UIcmdWithADouble*   	       Coll1_angle;
-   G4UIcmdWithADouble*   	       Coll2_angle;
-   G4UIcmdWithADouble*   	       Coll3_angle;
+   G4UIcmdWithADoubleAndUnit*                  CylinderThicknessCmd; 
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

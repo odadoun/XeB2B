@@ -19,12 +19,18 @@ class XeB2BDetectorConstruction : public G4VUserDetectorConstruction
 
 	public:
 		virtual G4VPhysicalVolume* Construct();
-		XeB2BDetectorMessenger* detectorMessenger;
+		XeB2BDetectorMessenger* fMessenger;
+		
+		void SetCylinderThickness(G4double thickness){itsthickness=thickness;}
+   		G4double GetCylinderThickness() {return itsthickness;}
+
+
 
 	private:
 		void DefineMaterials();
 		void SetupGeometry();
-	    void UpdateGeometry();
+	        void UpdateGeometry();
+   		G4double itsthickness;
 	private:
 		G4Material* air;
 		G4Material* water;
