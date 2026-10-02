@@ -32,14 +32,6 @@ XeB2BInputMessenger::~XeB2BInputMessenger()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void XeB2BInputMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
-  if( command == InputCmd )
-   { 
-	   Input->SetInputBunch(newValue);
-   }
-   
-}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

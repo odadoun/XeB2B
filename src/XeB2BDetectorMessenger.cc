@@ -36,15 +36,17 @@ XeB2BDetectorMessenger::~XeB2BDetectorMessenger()
 { 
 	delete CylinderThicknessCmd;
 }
-
+/*
 void XeB2BDetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 { 
 
    if( command == CylinderThicknessCmd )
     {
-        Detector->SetCylinderThickness(CylinderThicknessCmd->GetNewDoubleValue(newValue));
-	}
+	    Detector->SetCylinderThickness(CylinderThicknessCmd->GetNewDoubleValue(newValue));
+	    
+
+    }
     
-}
+}*/
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -24,14 +24,6 @@
 #include "G4NistManager.hh"
 #include "G4ios.hh"
 #include "Xenon1tMaterials.hh"
-G4double samplerZ  = 2.E-11 * m;
-G4double samplerXY = 40.*cm;//40.*cm;
-
-G4double pRmin = 0.089*mm;
-G4double pRmax = 2.75*mm;
-G4double capillaryThickness =  pRmax - pRmin;
-G4double capillary_length = 30. * mm;
-G4double Be_thickness = 150. * micrometer ;
 
 using namespace CLHEP;
 
@@ -69,6 +61,8 @@ void XeB2BDetectorConstruction::DefineMaterials()
 
   Materials->DefineMaterials(pWABSL, pEPTFEReflectivity, pGdConcentration);
   xenon = G4Material::GetMaterial("LXe");
+  G4NistManager* nist = G4NistManager::Instance();
+  tungsten = nist->FindOrBuildMaterial("G4_W");
   vacuum = G4Material::GetMaterial("Vacuum");
   //
   // define Elements
@@ -120,102 +114,197 @@ void XeB2BDetectorConstruction::DefineMaterials()
 
 void XeB2BDetectorConstruction::SetupGeometry()
 {
-  //
-  // World
-  //
-  G4VSolid* worldSolid = new G4Box("World",2.*m,2.*m,2.*m);
-  G4LogicalVolume* worldLogical = new G4LogicalVolume(worldSolid,Vacuum,"World");
-  worldPhys = new G4PVPlacement(0,G4ThreeVector(),worldLogical,"World", 0,false,0);
+  const G4double sampler_thickness = 0.01*um;   // épaisseur des samplers
 
-  G4RotationMatrix* rotation = new G4RotationMatrix();
-  rotation->rotateY(M_PI / 2);  // Rotation de 90° autour de Y pour aligner sur X
+  // ---------- World ----------
+  G4VSolid* worldSolid = new G4Box("World", 2.*m, 2.*m, 2.*m);
+  G4LogicalVolume* worldLogical = new G4LogicalVolume(worldSolid, Vacuum, "World");
+  worldPhys = new G4PVPlacement(0, G4ThreeVector(), worldLogical, "World", 0, false, 0);
 
-  // Grand cylindre de xénon
+  // ---------- Dimensions ----------
+  G4double innerRadius = 5.*cm;
+  G4double innerHeight = 50.*cm;
   G4double outerRadius = 50.*cm;
   G4double outerHeight = 100.*cm;
-  G4double innerRadius = 20.*cm;
-  G4cout << " INNER Thickess " << GetCylinderThickness() << G4endl;
-  G4double innerHeight = 50.*cm;
-  G4double sampler_thickness  = 2.E-11 * m;
+  G4double thicknesstungsten = 5.*mm;
 
-  G4Tubs* outerSolid =
-      new G4Tubs("OuterXeSolid",
-                 0.,
-                 outerRadius,
-                 outerHeight/2.,
-                 0.*deg,
-                 360.*deg);
+  G4double wRadius = innerRadius + thicknesstungsten;        // rayon du tungstène
+  G4double wHalfH  = innerHeight/2. + thicknesstungsten;     // demi-hauteur du tungstène
 
-  G4LogicalVolume* outerLogic =
-      new G4LogicalVolume(outerSolid,
-                          xenon,
-                          "OuterXeLogic");
+  // ---------- Visualisation ----------
+  G4VisAttributes* visSampler = new G4VisAttributes(G4Colour(1.0, 0.0, 0.0));
+  visSampler->SetVisibility(true);
+  G4VisAttributes* xenonVol = new G4VisAttributes(G4Colour(0.0, 1.0, 0.0));
+  xenonVol->SetVisibility(true);
+  G4VisAttributes* tungstenVol = new G4VisAttributes(G4Colour(0.0, 0.0, 1.0));
+  tungstenVol->SetVisibility(true);
 
-    new G4PVPlacement(rotation,
-                    G4ThreeVector(),
-                    outerLogic,
-                    "OuterXe",
-                    worldLogical,
-                    false,
-                    0,
-                    true);
+  // ---------- Sensitive detector ----------
+  G4SDManager* SDman = G4SDManager::GetSDMpointer();
+  SamplerSensDet = new XeB2BSamplerSD("XeB2BSamplerSD");
+  SDman->AddNewDetector(SamplerSensDet);
 
-    //Sampler0
-    G4Tubs* solidSampler0 =
-      new G4Tubs("Sampler0",
-                   innerRadius,
-                   innerRadius+sampler_thickness,
-                   outerHeight,
-                   0.*deg,
-                   360.*deg);
+  // Fonction utilitaire : coquille fermée (parois + bouchons) sampler_thickness,
+  // à l'intérieur d'un cylindre (R, halfH)
+  auto shellInside = [&](const G4String& name, G4double R, G4double halfH) {
+    G4Tubs* big   = new G4Tubs(name + "_big",   0., R,     halfH,     0.*deg, 360.*deg);
+    G4Tubs* small = new G4Tubs(name + "_small", 0., R - sampler_thickness, halfH - sampler_thickness, 0.*deg, 360.*deg);
+    return new G4SubtractionSolid(name, big, small);
+  };
 
-    G4VisAttributes* LogVisAttSampler= new G4VisAttributes(G4Colour(1.0,1.0,0.));
-  	//LogVisAttSampler->SetForceSolid(true);
-  	LogVisAttSampler->SetVisibility(true);
+  // ---------- Outer cylinder (xénon) ----------
+  G4Tubs* outerSolid = new G4Tubs("OuterXeSolid", 0., outerRadius,
+                                  outerHeight/2., 0.*deg, 360.*deg);
+  G4LogicalVolume* outerLogic = new G4LogicalVolume(outerSolid, xenon, "OuterXeLogic");
+  new G4PVPlacement(0, G4ThreeVector(), outerLogic, "OuterXe", worldLogical, false, 0, true);
+  outerLogic->SetVisAttributes(xenonVol);
 
-    G4ThreeVector positionSampler= G4ThreeVector(0.,0.,0);
-    G4LogicalVolume* logicSampler0 = new G4LogicalVolume(solidSampler0,Vacuum,"Sampler0");
-    pSampler0 = new G4PVPlacement(rotation,positionSampler,logicSampler0,"Sampler0",worldLogical,false,0);
-    logicSampler0 ->SetVisAttributes(LogVisAttSampler);
-
-  	G4SDManager* SDman = G4SDManager::GetSDMpointer();
-  	SamplerSensDet = new XeB2BSamplerSD("XeB2BSamplerSD");
-  	SDman->AddNewDetector(SamplerSensDet);
-  	logicSampler0->SetSensitiveDetector(SamplerSensDet);
+  // ---------- Sampler2 : coquille sur la surface interne de l'outer ----------
+  G4LogicalVolume* logicSampler2 =
+      new G4LogicalVolume(shellInside("Sampler2", outerRadius, outerHeight/2.),
+                          Vacuum, "Sampler2");
+  pSampler2 = new G4PVPlacement(0, G4ThreeVector(), logicSampler2,
+                                "Sampler2", outerLogic, false, 0, true);
+  logicSampler2->SetVisAttributes(visSampler);
+  logicSampler2->SetSensitiveDetector(SamplerSensDet);
 
 
-  G4Tubs* innerSolid =
-      new G4Tubs("InnerXeSolid",
-                 0.,
-                 innerRadius,
-                 innerHeight/2.,
-                 0.*deg,
-                 360.*deg);
+  // ---------- Tungstène (daughter outer) ----------
+  G4Tubs* tungstenSolid = new G4Tubs("InnerTungstenSolid", 0., wRadius, wHalfH,
+                                     0.*deg, 360.*deg);
+  G4LogicalVolume* innerTungstenLogic =
+      new G4LogicalVolume(tungstenSolid, tungsten, "InnerTungstenLogic");
+  new G4PVPlacement(0, G4ThreeVector(), innerTungstenLogic, "InnerTungsten",
+                    outerLogic, false, 0, true);
+  innerTungstenLogic->SetVisAttributes(tungstenVol);
 
-  G4LogicalVolume* innerLogic =
-      new G4LogicalVolume(innerSolid,
-                          xenon,
-                          "InnerXeLogic");
+  // ---------- Sampler1 :shell around tunsgten (dans le xénon extérieur) ----------
+  G4Tubs* s1Big   = new G4Tubs("Sampler1_big",   0., wRadius + sampler_thickness, wHalfH + sampler_thickness, 0.*deg, 360.*deg);
+  G4Tubs* s1Small = new G4Tubs("Sampler1_small", 0., wRadius,     wHalfH,     0.*deg, 360.*deg);
+  G4SubtractionSolid* solidSampler1 = new G4SubtractionSolid("Sampler1", s1Big, s1Small);
+  G4LogicalVolume* logicSampler1 = new G4LogicalVolume(solidSampler1, Vacuum, "Sampler1");
+  pSampler1 = new G4PVPlacement(0, G4ThreeVector(), logicSampler1,
+                                "Sampler1", outerLogic, false, 0, true);
+  logicSampler1->SetVisAttributes(visSampler);
+  logicSampler1->SetSensitiveDetector(SamplerSensDet);
 
-  new G4PVPlacement(rotation,
-                    G4ThreeVector(0,0,0),
-                    innerLogic,
-                    "InnerXe",
-                    worldLogical,
-                    false,
-                    0,
-                    true);
+  // ---------- Xénon intérieur (fille du tungstène) ----------
+  G4Tubs* innerSolid = new G4Tubs("InnerXeSolid", 0., innerRadius,
+                                  innerHeight/2., 0.*deg, 360.*deg);
+  G4LogicalVolume* innerLogic = new G4LogicalVolume(innerSolid, xenon, "InnerXeLogic");
+  new G4PVPlacement(0, G4ThreeVector(), innerLogic, "InnerXe",
+                    innerTungstenLogic, false, 0, true);   // <-- mère = tungstène
+  innerLogic->SetVisAttributes(xenonVol);
 
-  G4Tubs* solidSampler1 =
-    new G4Tubs("Sampler1",
-                 outerRadius-sampler_thickness,
-                 outerRadius,
-                 outerHeight/2.,
-                 0.*deg,
-                 360.*deg);
-
-  G4LogicalVolume* logicSampler1 = new G4LogicalVolume(solidSampler1,Vacuum,"Sampler1");
-  pSampler1 = new G4PVPlacement(rotation,positionSampler,logicSampler1,"Sampler1",worldLogical,false,0);
-  logicSampler1 ->SetVisAttributes(LogVisAttSampler);
-  logicSampler1 ->SetSensitiveDetector(SamplerSensDet);
+  // ---------- Sampler0 : coquille sur la surface interne du xénon intérieur ----------
+  G4LogicalVolume* logicSampler0 =
+      new G4LogicalVolume(shellInside("Sampler0", innerRadius, innerHeight/2.),
+                          Vacuum, "Sampler0");
+  pSampler0 = new G4PVPlacement(0, G4ThreeVector(), logicSampler0,
+                                "Sampler0", innerLogic, false, 0, true);
+  logicSampler0->SetVisAttributes(visSampler);
+  logicSampler0->SetSensitiveDetector(SamplerSensDet);
 }
+
+#if 0
+void XeB2BDetectorConstruction::SetupGeometry()
+{
+  const G4double sampler_thickness = 1.*um;
+
+  // ---------- World ----------
+  G4VSolid* worldSolid = new G4Box("World", 2.*m, 2.*m, 2.*m);
+  G4LogicalVolume* worldLogical = new G4LogicalVolume(worldSolid, Vacuum, "World");
+  worldPhys = new G4PVPlacement(0, G4ThreeVector(), worldLogical, "World", 0, false, 0);
+
+  // Rotation de 90° autour de Y (axe du cylindre -> X)
+  G4RotationMatrix* rotation = new G4RotationMatrix();
+  rotation->rotateY(M_PI / 2);
+  G4RotationMatrix *pRotX90 = new G4RotationMatrix();
+  pRotX90->rotateX(90. * deg);
+  // ---------- Dimensions ----------
+  G4double innerRadius = 5.*cm;
+  G4double innerHeight = 50.*cm;
+  G4double outerRadius = 50.*cm;
+  G4double outerHeight = 100.*cm;
+  G4double thicknesstungsten = 5.*mm;
+  // ---------- Visualisation ----------
+  G4VisAttributes* visSampler = new G4VisAttributes(G4Colour(1.0, 1.0, 0.));
+  visSampler->SetVisibility(true);
+  G4VisAttributes* xenonVol = new G4VisAttributes(G4Colour(.0, 1.0, 0.));
+  xenonVol->SetVisibility(true);
+  G4VisAttributes* tungstenVol = new G4VisAttributes(G4Colour(.0, .0, 1.));
+  tungstenVol->SetVisibility(true);
+
+  // ---------- Sensitive detector (créé UNE fois, avant usage) ----------
+  G4SDManager* SDman = G4SDManager::GetSDMpointer();
+  SamplerSensDet = new XeB2BSamplerSD("XeB2BSamplerSD");
+  SDman->AddNewDetector(SamplerSensDet);
+
+  // ---------- Outer cylinder (xénon) ----------
+  G4Tubs* outerSolid = new G4Tubs("OuterXeSolid", 0., outerRadius,
+                                  outerHeight/2., 0.*deg, 360.*deg);
+  G4LogicalVolume* outerLogic = new G4LogicalVolume(outerSolid, xenon, "OuterXeLogic");
+  new G4PVPlacement(0, G4ThreeVector(), outerLogic, "OuterXe",
+                    worldLogical, false, 0, true);
+  outerLogic->SetVisAttributes(xenonVol);
+
+  // ---------- Sampler2 : coquille à la surface de l'outer ----------
+  G4Tubs* solidSampler2 = new G4Tubs("Sampler2",
+                                     0,
+                                     outerRadius-sampler_thickness,
+                                     outerHeight/2.-sampler_thickness,
+                                     0.*deg, 360.*deg);
+  G4LogicalVolume* logicSampler2 = new G4LogicalVolume(solidSampler2, Vacuum, "Sampler2");
+  pSampler2 = new G4PVPlacement(0, G4ThreeVector(), logicSampler2,
+                                "Sampler1", outerLogic, false, 0, true);
+  logicSampler2->SetVisAttributes(visSampler);
+  logicSampler2->SetSensitiveDetector(SamplerSensDet);
+
+  // ---------- Tungsten cylinder ----------
+  G4Tubs* solidSampler1 = new G4Tubs("Sampler1",
+                                     0,
+                                     innerRadius+thicknesstungsten + sampler_thickness,
+                                     innerHeight/2.+thicknesstungsten+sampler_thickness,
+                                     0.*deg, 360.*deg);
+  G4LogicalVolume* logicSampler1 = new G4LogicalVolume(solidSampler1, Vacuum, "Sampler1");
+  pSampler1 = new G4PVPlacement(0, G4ThreeVector(), logicSampler1,
+                                "Sampler1", logicSampler2, false, 0, true);
+  logicSampler1->SetVisAttributes(visSampler);
+  logicSampler1->SetSensitiveDetector(SamplerSensDet);
+
+   G4Tubs* tungstenSolid = new G4Tubs("InnerTungstenSolid", 0, innerRadius+thicknesstungsten,
+                                  innerHeight/2.+thicknesstungsten, 0.*deg, 360.*deg);
+  G4LogicalVolume* innerTungstenLogic = new G4LogicalVolume(tungstenSolid, tungsten, "InnerTungstenLogic");
+  new G4PVPlacement(0,                    //
+                    G4ThreeVector(),
+                    innerTungstenLogic,
+                    "InnerTungsten",
+                    logicSampler1,           //
+                    false, 0, true);
+  innerTungstenLogic->SetVisAttributes(tungstenVol);
+
+  // Inner cylinder Xenon
+  G4Tubs* innerSolid = new G4Tubs("InnerXeSolid", 0., innerRadius,
+                                  innerHeight/2., 0.*deg, 360.*deg);
+  G4LogicalVolume* innerLogic = new G4LogicalVolume(innerSolid, xenon, "InnerXeLogic");
+  new G4PVPlacement(0,                    //
+                    G4ThreeVector(),
+                    innerTungstenLogic,
+                    "InnerXe",
+                    outerLogic,           //
+                    false, 0, true);
+  innerLogic->SetVisAttributes(xenonVol);
+  //
+  // ---------- Sampler0 : coquille autour de l'inner, FILLE de l'outer ----------
+  G4Tubs* solidSampler0 = new G4Tubs("Sampler0",
+                                     0,
+                                     innerRadius - sampler_thickness,
+                                     innerHeight/2.- sampler_thickness,
+                                     0.*deg, 360.*deg);
+  G4LogicalVolume* logicSampler0 = new G4LogicalVolume(solidSampler0, Vacuum, "Sampler0");
+  pSampler0 = new G4PVPlacement(0, G4ThreeVector(), logicSampler0,
+                                "Sampler0", innerLogic, false, 0, true);
+  logicSampler0->SetVisAttributes(visSampler);
+  logicSampler0->SetSensitiveDetector(SamplerSensDet);
+}
+#endif

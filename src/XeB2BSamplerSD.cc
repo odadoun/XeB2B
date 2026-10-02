@@ -80,7 +80,7 @@ G4bool XeB2BSamplerSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 
 		G4String sampname       =  theTrack->GetVolume()->GetName();
 		
-	if(pz<0)  energy*=-1;// to distinguish backscattered particles
+		if(pz<0)  energy*=-1;// to distinguish backscattered particles
 		XeB2BSamplerHit* newHit = new XeB2BSamplerHit(sampname,pdg,trackID,time,x,y,z,energy,px,py,pz,energy0,r0,z0);
 	
 		XeB2BSamplerCollection->insert( newHit );	

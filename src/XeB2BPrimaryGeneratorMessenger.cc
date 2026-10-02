@@ -24,13 +24,6 @@ XeB2BPrimaryGeneratorMessenger::XeB2BPrimaryGeneratorMessenger(XeB2BPrimaryGener
 {
 	gunDir = new G4UIdirectory("/xe2b2/gun/");
 	gunDir->SetGuidance("PrimaryGenerator control");
-	
-	PositionOffsetCmd = new G4UIcmdWith3VectorAndUnit("/xe2b2/gun/offset_position",this);  
-	PositionOffsetCmd->SetGuidance("Set Primary Position offset ");
-        PositionOffsetCmd->SetUnitCandidates("um");
-	
-	AngleOffsetCmd = new G4UIcmdWithADouble("/xe2b2/gun/offset_angle",this);
-        AngleOffsetCmd->SetGuidance("Set Primary Angle offset");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -42,18 +35,6 @@ XeB2BPrimaryGeneratorMessenger::~XeB2BPrimaryGeneratorMessenger()
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void XeB2BPrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{ 
-if( command == PositionOffsetCmd )
-	{ 	
-		(XeB2BAction->SetPositionOffset(PositionOffsetCmd->GetNew3VectorValue(newValue)));
-	}
-if( command == AngleOffsetCmd )
-	{ 	
-		(XeB2BAction->SetAngleOffset(AngleOffsetCmd->GetNewDoubleValue(newValue)));
-	}
-	
-}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

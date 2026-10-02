@@ -39,11 +39,14 @@ void XeB2BOutput::Init()
 	rootFile = new TFile ("XeB2B.root","RECREATE","XeB2BSim output file");
   header = new TObjString("MyHeader");
 	G4String name;
-	for(G4int i=0;i<=1;i++){
+	for(G4int i=0;i<=2;i++){
 		if(i==0) name="Sampler0";
-    if(i==1) name="Sampler1";
-
-		TTree* SamplerTree = new TTree(name,"Sampler output");
+		if(i==1) name="Sampler1";
+		if(i==2) name="Sampler2";
+	        
+	        G4String header;
+		header = "Sampler output :" +name;		
+		TTree* SamplerTree = new TTree(name,header);
 		SamplerTree->Branch("pdg",&pdg,"pdg/I");
 		SamplerTree->Branch("tID",&track_id,"tID/I");
 		SamplerTree->Branch("t",&t,"t/F");
@@ -56,12 +59,9 @@ void XeB2BOutput::Init()
 		SamplerTree->Branch("px",&px,"px/F");
 		SamplerTree->Branch("py",&py,"py/F");
 		SamplerTree->Branch("pz",&pz,"pz/F");
-    if(i != 0)
-    {
         SamplerTree->Branch("E0",&E0,"E0/F");
         SamplerTree->Branch("r0",&r0,"r0/F");
         SamplerTree->Branch("z0",&z0,"z0/F");
-    }
 	}
 }
 

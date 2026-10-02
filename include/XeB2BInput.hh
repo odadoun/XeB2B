@@ -19,7 +19,7 @@ class XeB2BInput
   public:
     XeB2BInput();
    ~XeB2BInput();
-    void GetNextParticle(G4double& z0, G4double& x0 , G4double& y0 , G4double& px0, G4double& py0, G4double& pz0);
+    void GetNextParticle(G4double& x0, G4double& y0 , G4double& z0 , G4double& px0, G4double& py0, G4double& pz0);
   private:
     ifstream input_file;
     G4String itsName;
@@ -27,7 +27,6 @@ class XeB2BInput
     G4bool channelling_file; 
   public:
 	 XeB2BInputMessenger* inputMessenger;	
-	 void SetInputBunch(G4String NameFile);
 	//XeB2BInputMessenger* inputMessenger;
 	G4String GetInputName(){return itsName;}
 };

@@ -42,6 +42,7 @@ class XeB2BDetectorConstruction : public G4VUserDetectorConstruction
 		G4Material* Be;
                 Xenon1tMaterials *Materials;
 		G4Material *xenon;
+		G4Material *tungsten;
 		G4Material *vacuum;
 
 		G4Material* quartz;

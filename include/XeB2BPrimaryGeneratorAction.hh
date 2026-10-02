@@ -20,11 +20,6 @@ class XeB2BPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   public:
     virtual void GeneratePrimaries(G4Event*);
 
-   void SetPositionOffset(G4ThreeVector offsetposition);
-   G4ThreeVector GetPositionOffset();
-
-   void SetAngleOffset(G4double offsetangle);
-   G4double GetAngleOffset();
   private:
     G4ParticleGun*                particleGun;
     XeB2BInput input;
@@ -33,17 +28,6 @@ class XeB2BPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     G4double itsoffsetangle;	
 };
 
-inline void XeB2BPrimaryGeneratorAction::SetPositionOffset(G4ThreeVector offsetposition)
-{itsoffsetposition = offsetposition;}
-
-inline G4ThreeVector  XeB2BPrimaryGeneratorAction::GetPositionOffset()
-{return itsoffsetposition;}
-
-inline void XeB2BPrimaryGeneratorAction::SetAngleOffset(G4double offsetangle)
-{itsoffsetangle = offsetangle;}
-
-inline G4double  XeB2BPrimaryGeneratorAction::GetAngleOffset()
-{return itsoffsetangle;}
 #endif
 
 

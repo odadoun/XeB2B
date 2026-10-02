@@ -35,7 +35,7 @@ class XeB2BDetectorMessenger: public G4UImessenger
     XeB2BDetectorMessenger(XeB2BDetectorConstruction* );
    ~XeB2BDetectorMessenger();
     
-    void SetNewValue(G4UIcommand*, G4String);
+//    void SetNewValue(G4UIcommand*, G4String);
     
   private:
    G4UIdirectory*                              detDir;

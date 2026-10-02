@@ -27,8 +27,6 @@ public:
   XeB2BPrimaryGeneratorMessenger(XeB2BPrimaryGeneratorAction*);
   virtual ~XeB2BPrimaryGeneratorMessenger();
     
-  void SetNewValue(G4UIcommand*, G4String);
-    
 private:
   G4UIdirectory*               gunDir; 
    XeB2BPrimaryGeneratorAction*    XeB2BAction;

@@ -27,7 +27,7 @@ nb_coll1_edep(0),nb_coll2_edep(0),countkiller(0)
 XeB2BRunAction::~XeB2BRunAction()
 { 
 	G4cout << " XeB2B run action is deleted "  << G4endl; 
-	G4cout << countkiller << " e- after the magnet have been killed" << G4endl;
+	//G4cout << countkiller << " e- after the magnet have been killed" << G4endl;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void XeB2BRunAction::BeginOfRunAction(const G4Run* aRun)

@@ -24,7 +24,6 @@ class XeB2BInputMessenger: public G4UImessenger
     XeB2BInputMessenger(XeB2BInput* );
    ~XeB2BInputMessenger();
     
-   void SetNewValue(G4UIcommand*, G4String);
     
   private:
   
